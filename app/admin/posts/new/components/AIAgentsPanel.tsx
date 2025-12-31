@@ -55,6 +55,11 @@ export function AIAgentsPanel({ content, onResult }: AIAgentsPanelProps) {
         body: JSON.stringify({ content }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Error desconocido' }));
+        throw new Error(errorData.error || `Error HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const data = await response.json();
 
       if (data.success && data.result) {
@@ -63,7 +68,15 @@ export function AIAgentsPanel({ content, onResult }: AIAgentsPanelProps) {
         setErrors((prev) => ({ ...prev, [agentId]: '' }));
         onResult(agentId, agent?.name || 'Agente', agent?.type || 'unknown', data.result);
       } else {
-        const errorMessage = data.error || 'Error al ejecutar agente';
+        // Extract error message with debug info if available
+        let errorMessage = data.error || 'Error al ejecutar agente';
+        if (data.details && process.env.NODE_ENV === 'development') {
+          errorMessage += ` (${data.details})`;
+        }
+        if (data.debug && process.env.NODE_ENV === 'development') {
+          console.error('Agent execution debug info:', data.debug);
+        }
+        
         setErrors((prev) => ({ ...prev, [agentId]: errorMessage }));
         setResults((prev) => {
           const updated = { ...prev };
@@ -72,7 +85,23 @@ export function AIAgentsPanel({ content, onResult }: AIAgentsPanelProps) {
         });
       }
     } catch (error: any) {
-      const errorMessage = error.message || 'Error de conexión. Verifica tu conexión a internet.';
+      console.error('Error executing agent:', {
+        agentId,
+        error: error.message,
+        stack: error.stack,
+      });
+      
+      let errorMessage = error.message || 'Error de conexión. Verifica tu conexión a internet.';
+      
+      // Provide more helpful error messages
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        errorMessage = 'Error de conexión. Verifica tu conexión a internet y que el servidor esté disponible.';
+      } else if (error.message?.includes('XAI_API_KEY')) {
+        errorMessage = 'Error de configuración: XAI_API_KEY no está configurada en Vercel. Contacta al administrador.';
+      } else if (error.message?.includes('timeout') || error.message?.includes('tardó demasiado')) {
+        errorMessage = 'La solicitud tardó demasiado. Intenta con menos contenido.';
+      }
+      
       setErrors((prev) => ({ ...prev, [agentId]: errorMessage }));
       setResults((prev) => {
         const updated = { ...prev };
