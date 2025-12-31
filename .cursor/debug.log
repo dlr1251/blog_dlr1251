@@ -1,0 +1,14 @@
+{"location":"app/admin/layout.tsx","message":"AdminLayout render","data":{"hasSession":false,"pathname":"admin layout"},"timestamp":1767191726817,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout redirecting to login (no session)","data":{},"timestamp":1767191726827,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout render","data":{"hasSession":false,"pathname":"admin layout"},"timestamp":1767191726911,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout redirecting to login (no session)","data":{},"timestamp":1767191726911,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout render","data":{"hasSession":false,"pathname":"admin layout"},"timestamp":1767191737389,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout redirecting to login (no session)","data":{},"timestamp":1767191737390,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout render","data":{"hasSession":false,"pathname":"admin layout"},"timestamp":1767191739941,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout redirecting to login (no session)","data":{},"timestamp":1767191739941,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout render","data":{"hasSession":false,"pathname":"admin layout"},"timestamp":1767191746573,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout rendering (session check passed by middleware)","data":{"hasSession":false},"timestamp":1767191746575,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout render","data":{"hasSession":false,"pathname":"admin layout"},"timestamp":1767191776801,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout: No session, rendering children only (likely login page)","data":{},"timestamp":1767191776804,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout render","data":{"hasSession":false,"pathname":"admin layout"},"timestamp":1767191783206,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/admin/layout.tsx","message":"AdminLayout: No session, rendering children only (likely login page)","data":{},"timestamp":1767191783207,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
