@@ -12,6 +12,76 @@
   display: none;
 }
 
+/* Markdown Editor Toolbar - Make it bigger and more usable */
+.w-md-editor-toolbar {
+  min-height: 48px !important;
+  padding: 8px 12px !important;
+  gap: 8px !important;
+}
+
+.w-md-editor-toolbar ul {
+  gap: 6px !important;
+}
+
+.w-md-editor-toolbar li button {
+  min-width: 36px !important;
+  min-height: 36px !important;
+  padding: 8px !important;
+  font-size: 16px !important;
+}
+
+.w-md-editor-toolbar li button svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .w-md-editor-toolbar {
+    min-height: 52px !important;
+    padding: 10px 8px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .w-md-editor-toolbar ul {
+    gap: 4px !important;
+  }
+
+  .w-md-editor-toolbar li button {
+    min-width: 40px !important;
+    min-height: 40px !important;
+    padding: 10px !important;
+    font-size: 18px !important;
+  }
+
+  .w-md-editor-toolbar li button svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+/* Desktop - Make it even more spacious */
+@media (min-width: 1024px) {
+  .w-md-editor-toolbar {
+    min-height: 52px !important;
+    padding: 10px 16px !important;
+    gap: 10px !important;
+  }
+
+  .w-md-editor-toolbar li button {
+    min-width: 40px !important;
+    min-height: 40px !important;
+    padding: 10px !important;
+    font-size: 17px !important;
+  }
+
+  .w-md-editor-toolbar li button svg {
+    width: 19px !important;
+    height: 19px !important;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
