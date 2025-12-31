@@ -107,7 +107,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { title, content, excerpt, published, tags, category } = body;
+    const { title, content, excerpt, published, tags, category, published_at } = body;
 
     if (!title || !content) {
       return NextResponse.json(
@@ -120,6 +120,16 @@ export async function POST(request: Request) {
     const baseSlug = generateSlug(title);
     const slug = await ensureUniqueSlug(baseSlug);
 
+    // Determine published_at: use provided date, or current date if publishing now, or null if draft
+    let publishedAt = null;
+    if (published) {
+      if (published_at) {
+        publishedAt = new Date(published_at).toISOString();
+      } else {
+        publishedAt = new Date().toISOString();
+      }
+    }
+
     const { data: post, error } = await supabase
       .from('posts')
       .insert({
@@ -128,7 +138,7 @@ export async function POST(request: Request) {
         content,
         excerpt,
         published: published || false,
-        published_at: published ? new Date().toISOString() : null,
+        published_at: publishedAt,
         tags: tags || [],
         category,
         author_id: user!.id,
