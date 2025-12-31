@@ -86,7 +86,7 @@ export async function PUT(
 
     const supabase = createServiceRoleClient();
     const body = await request.json();
-    const { title, content, excerpt, published, tags, category } = body;
+    const { title, content, excerpt, published, tags, category, published_at } = body;
 
     const { data: existingPost, error: fetchError } = await supabase
       .from('posts')
@@ -115,9 +115,18 @@ export async function PUT(
       category,
     };
 
-    // Set published_at if publishing for the first time
-    if (published && !existingPost.published) {
-      updateData.published_at = new Date().toISOString();
+    // Handle published_at: use scheduled time if provided, otherwise set to now if publishing for first time
+    if (published) {
+      if (published_at) {
+        updateData.published_at = published_at;
+      } else if (!existingPost.published_at) {
+        // Only set to now if it wasn't already published
+        updateData.published_at = new Date().toISOString();
+      }
+      // If already published, keep existing published_at unless explicitly changed
+    } else {
+      // If unpublishing, we might want to clear published_at, but let's keep it for history
+      // updateData.published_at = null;
     }
 
     const { data: post, error } = await supabase
