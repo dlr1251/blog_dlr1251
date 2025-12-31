@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,15 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-const agentTypes = [
-  { value: 'spellcheck', label: 'Corrección Ortográfica' },
-  { value: 'grammar', label: 'Gramática' },
-  { value: 'clarity', label: 'Claridad' },
-  { value: 'critique', label: 'Crítica' },
-  { value: 'questions', label: 'Preguntas' },
-  { value: 'intention', label: 'Intención' },
-];
+import { agentTypes, getDefaultPrompt } from '@/lib/ai-agent-defaults';
 
 export default function NewAIAgentPage() {
   const router = useRouter();
@@ -37,6 +29,21 @@ export default function NewAIAgentPage() {
     userPrompt: '{{content}}',
     enabled: true,
   });
+
+  // Load default prompt when type changes
+  useEffect(() => {
+    if (formData.type) {
+      const defaultPrompt = getDefaultPrompt(formData.type);
+      if (defaultPrompt) {
+        setFormData((prev) => ({
+          ...prev,
+          systemPrompt: defaultPrompt.systemPrompt,
+          userPrompt: defaultPrompt.userPrompt,
+          description: prev.description || defaultPrompt.description || '',
+        }));
+      }
+    }
+  }, [formData.type]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

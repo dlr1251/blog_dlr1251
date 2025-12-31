@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,15 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-const agentTypes = [
-  { value: 'spellcheck', label: 'Corrección Ortográfica' },
-  { value: 'grammar', label: 'Gramática' },
-  { value: 'clarity', label: 'Claridad' },
-  { value: 'critique', label: 'Crítica' },
-  { value: 'questions', label: 'Preguntas' },
-  { value: 'intention', label: 'Intención' },
-];
+import { agentTypes, getDefaultPrompt } from '@/lib/ai-agent-defaults';
 
 export function EditAIAgentForm({ agent }: { agent: any }) {
   const router = useRouter();
@@ -37,6 +29,43 @@ export function EditAIAgentForm({ agent }: { agent: any }) {
     userPrompt: agent.user_prompt || '{{content}}',
     enabled: agent.enabled !== undefined ? agent.enabled : true,
   });
+
+  const [hasLoadedDefaults, setHasLoadedDefaults] = useState(false);
+
+  // Load default prompt when type changes (only if systemPrompt is empty or user explicitly changes type)
+  useEffect(() => {
+    if (formData.type && !hasLoadedDefaults) {
+      const defaultPrompt = getDefaultPrompt(formData.type);
+      if (defaultPrompt && (!formData.systemPrompt || formData.systemPrompt === agent.system_prompt)) {
+        setFormData((prev) => ({
+          ...prev,
+          systemPrompt: defaultPrompt.systemPrompt,
+          userPrompt: defaultPrompt.userPrompt,
+          description: prev.description || defaultPrompt.description || '',
+        }));
+        setHasLoadedDefaults(true);
+      }
+    }
+  }, [formData.type, hasLoadedDefaults, formData.systemPrompt, agent.system_prompt]);
+
+  // Handle type change - load defaults if user changes type
+  const handleTypeChange = (newType: string) => {
+    const defaultPrompt = getDefaultPrompt(newType);
+    if (defaultPrompt) {
+      setFormData((prev) => ({
+        ...prev,
+        type: newType,
+        systemPrompt: defaultPrompt.systemPrompt,
+        userPrompt: defaultPrompt.userPrompt,
+        description: prev.description || defaultPrompt.description || '',
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        type: newType,
+      }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -150,7 +179,7 @@ export function EditAIAgentForm({ agent }: { agent: any }) {
               <Label htmlFor="type">Tipo *</Label>
               <Select
                 value={formData.type}
-                onValueChange={(value) => setFormData({ ...formData, type: value })}
+                onValueChange={handleTypeChange}
                 disabled={loading}
                 required
               >

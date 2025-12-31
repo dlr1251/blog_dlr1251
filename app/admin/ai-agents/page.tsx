@@ -20,12 +20,10 @@ export default async function AIAgentsPage() {
     .order('created_at', { ascending: false });
 
   const agentTypes = {
-    spellcheck: 'Corrección Ortográfica',
-    grammar: 'Gramática',
-    clarity: 'Claridad',
-    critique: 'Crítica',
-    questions: 'Preguntas',
-    intention: 'Intención',
+    grammar: 'Gramática y Estilo',
+    critique: 'Crítica y Abogado del Diablo',
+    questions: 'Lluvia de Ideas y Preguntas Socráticas',
+    intention: 'Línea Editorial e Intención',
   };
 
   return (

@@ -72,12 +72,10 @@ export function AIAgentsPanel({ content, onResult }: AIAgentsPanelProps) {
   };
 
   const agentTypes: Record<string, string> = {
-    spellcheck: 'Corrección Ortográfica',
-    grammar: 'Gramática',
-    clarity: 'Claridad',
+    grammar: 'Gramática y Estilo',
     critique: 'Crítica',
-    questions: 'Preguntas',
-    intention: 'Intención',
+    questions: 'Lluvia de Ideas',
+    intention: 'Línea Editorial',
   };
 
   if (agents.length === 0) {
