@@ -1,14 +1,23 @@
 import OpenAI from 'openai';
 
-if (!process.env.XAI_API_KEY) {
-  throw new Error('XAI_API_KEY is not set');
-}
-
 // xAI Grok uses OpenAI-compatible API
-const grokClient = new OpenAI({
-  apiKey: process.env.XAI_API_KEY,
-  baseURL: 'https://api.x.ai/v1',
-});
+// Initialize client lazily to avoid build-time errors if key is not set
+let grokClient: OpenAI | null = null;
+
+function getGrokClient(): OpenAI {
+  if (!process.env.XAI_API_KEY) {
+    throw new Error('XAI_API_KEY is not set');
+  }
+  
+  if (!grokClient) {
+    grokClient = new OpenAI({
+      apiKey: process.env.XAI_API_KEY,
+      baseURL: 'https://api.x.ai/v1',
+    });
+  }
+  
+  return grokClient;
+}
 
 // Generic function for AI agents to use Grok
 export async function analyzeWithGrok(
@@ -19,7 +28,8 @@ export async function analyzeWithGrok(
   maxTokens?: number
 ): Promise<string> {
   try {
-    const response = await grokClient.chat.completions.create({
+    const client = getGrokClient();
+    const response = await client.chat.completions.create({
       model,
       messages: [
         {
