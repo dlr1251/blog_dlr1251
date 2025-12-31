@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createPublicServerClient } from '@/lib/supabase';
 import { format } from 'date-fns';
+import { StyleSelector } from './posts/[slug]/components/StyleSelector';
 
 export default async function Home() {
   const supabase = createPublicServerClient();
@@ -57,9 +58,6 @@ export default async function Home() {
               <Link href="/" className="text-gray-600 hover:text-gray-900">
                 Inicio
               </Link>
-              <Link href="/admin" className="text-gray-600 hover:text-gray-900">
-                Admin
-              </Link>
             </nav>
           </div>
         </div>
@@ -67,10 +65,15 @@ export default async function Home() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">Últimos Posts</h1>
-          <p className="text-gray-600">
-            Pensamientos, ideas y reflexiones sobre tecnología, derecho y más.
-          </p>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-4">Últimos Posts</h1>
+              <p className="text-gray-600">
+                Pensamientos, ideas y reflexiones sobre tecnología, derecho y más.
+              </p>
+            </div>
+            <StyleSelector />
+          </div>
         </div>
 
         {postsWithCounts.length === 0 ? (

@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbar for mobile tabs */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -133,5 +143,421 @@
 
 .prose td {
   @apply border border-gray-300 px-4 py-2;
+}
+
+/* Theme Styles for Posts */
+
+/* Neocyberpunk Modern Minimalist Theme */
+article.theme-neocyberpunk {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+article.theme-neocyberpunk h1 {
+  color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+article.theme-neocyberpunk h2 {
+  color: #00ff88;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+article.theme-neocyberpunk h3 {
+  color: #00ff88;
+  font-weight: 400;
+}
+
+article.theme-neocyberpunk p {
+  color: #e0e0e0;
+  line-height: 1.8;
+}
+
+article.theme-neocyberpunk .markdown-content a {
+  color: #00ffff;
+  text-decoration: none;
+  border-bottom: 1px solid #00ffff;
+  transition: all 0.3s;
+}
+
+article.theme-neocyberpunk .markdown-content a:hover {
+  color: #00ff88;
+  border-bottom-color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+}
+
+article.theme-neocyberpunk .markdown-content code {
+  background: rgba(0, 255, 255, 0.1);
+  color: #00ff88;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+article.theme-neocyberpunk .markdown-content blockquote {
+  border-left: 3px solid #00ffff;
+  background: rgba(0, 255, 255, 0.05);
+  color: #b0b0b0;
+}
+
+article.theme-neocyberpunk .markdown-content strong {
+  color: #00ffff;
+  font-weight: 500;
+}
+
+/* Baroque-Victorian Elegant Theme */
+article.theme-baroque {
+  background: linear-gradient(135deg, #f5f1e8 0%, #e8e0d1 100%);
+  border: 2px solid #8b7355;
+  box-shadow: 0 10px 40px rgba(139, 115, 85, 0.2);
+}
+
+article.theme-baroque h1 {
+  color: #5c4a37;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-weight: 700;
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: #8b7355;
+  text-underline-offset: 8px;
+}
+
+article.theme-baroque h2 {
+  color: #6b5b47;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-weight: 600;
+  border-bottom: 2px double #8b7355;
+  padding-bottom: 8px;
+}
+
+article.theme-baroque h3 {
+  color: #7a6a56;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-weight: 600;
+}
+
+article.theme-baroque p {
+  color: #4a3e2e;
+  line-height: 1.9;
+  text-align: justify;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+article.theme-baroque .markdown-content a {
+  color: #8b4513;
+  text-decoration: underline;
+  text-decoration-style: wavy;
+}
+
+article.theme-baroque .markdown-content a:hover {
+  color: #654321;
+}
+
+article.theme-baroque .markdown-content code {
+  background: #d4c4a8;
+  color: #5c4a37;
+  border: 1px solid #8b7355;
+  font-family: 'Courier New', monospace;
+}
+
+article.theme-baroque .markdown-content blockquote {
+  border-left: 4px solid #8b7355;
+  background: #f0ebe0;
+  color: #5c4a37;
+  font-style: italic;
+  padding-left: 20px;
+  border-left-style: double;
+}
+
+article.theme-baroque .markdown-content strong {
+  color: #5c4a37;
+  font-weight: 700;
+}
+
+/* Gothic Theme */
+article.theme-gothic {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #4a4a4a;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+article.theme-gothic h1 {
+  color: #8b0000;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #4a4a4a;
+  padding-bottom: 10px;
+}
+
+article.theme-gothic h2 {
+  color: #a0522d;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+article.theme-gothic h3 {
+  color: #8b4513;
+  font-weight: 600;
+}
+
+article.theme-gothic p {
+  color: #d3d3d3;
+  line-height: 1.8;
+}
+
+article.theme-gothic .markdown-content a {
+  color: #8b0000;
+  text-decoration: none;
+  border-bottom: 1px solid #8b0000;
+}
+
+article.theme-gothic .markdown-content a:hover {
+  color: #ff0000;
+  border-bottom-color: #ff0000;
+}
+
+article.theme-gothic .markdown-content code {
+  background: #2d2d2d;
+  color: #d3d3d3;
+  border: 1px solid #4a4a4a;
+}
+
+article.theme-gothic .markdown-content blockquote {
+  border-left: 4px solid #8b0000;
+  background: rgba(139, 0, 0, 0.1);
+  color: #b0b0b0;
+  font-style: italic;
+}
+
+article.theme-gothic .markdown-content strong {
+  color: #8b0000;
+  font-weight: 700;
+}
+
+/* Cheerful Theme */
+article.theme-cheerful {
+  background: linear-gradient(135deg, #fff5e6 0%, #ffe6f2 50%, #e6f2ff 100%);
+  border: 3px solid #ff6b9d;
+  box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+}
+
+article.theme-cheerful h1 {
+  color: #ff6b9d;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(255, 107, 157, 0.3);
+}
+
+article.theme-cheerful h2 {
+  color: #4ecdc4;
+  font-weight: 600;
+}
+
+article.theme-cheerful h3 {
+  color: #ffe66d;
+  font-weight: 600;
+}
+
+article.theme-cheerful p {
+  color: #4a5568;
+  line-height: 1.8;
+}
+
+article.theme-cheerful .markdown-content a {
+  color: #ff6b9d;
+  text-decoration: underline;
+  text-decoration-color: #ff6b9d;
+}
+
+article.theme-cheerful .markdown-content a:hover {
+  color: #4ecdc4;
+  text-decoration-color: #4ecdc4;
+}
+
+article.theme-cheerful .markdown-content code {
+  background: #ffe6f2;
+  color: #ff6b9d;
+  border: 2px solid #ff6b9d;
+  border-radius: 6px;
+}
+
+article.theme-cheerful .markdown-content blockquote {
+  border-left: 4px solid #4ecdc4;
+  background: rgba(78, 205, 196, 0.1);
+  color: #2d3748;
+  border-left-style: solid;
+}
+
+article.theme-cheerful .markdown-content strong {
+  color: #ff6b9d;
+  font-weight: 700;
+}
+
+article.theme-cheerful .markdown-content ul li::marker,
+article.theme-cheerful .markdown-content ol li::marker {
+  color: #ff6b9d;
+}
+
+/* Theme Styles for Home Page (main element) */
+
+/* Neocyberpunk Modern Minimalist Theme for Home */
+main.theme-neocyberpunk {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+}
+
+main.theme-neocyberpunk h1,
+main.theme-neocyberpunk h2,
+main.theme-neocyberpunk h3 {
+  color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+main.theme-neocyberpunk p,
+main.theme-neocyberpunk span,
+main.theme-neocyberpunk time {
+  color: #e0e0e0;
+}
+
+main.theme-neocyberpunk a {
+  color: #00ffff;
+  border-bottom: 1px solid #00ffff;
+}
+
+main.theme-neocyberpunk a:hover {
+  color: #00ff88;
+  border-bottom-color: #00ff88;
+}
+
+main.theme-neocyberpunk .bg-white {
+  background: rgba(0, 255, 255, 0.1) !important;
+  border: 1px solid rgba(0, 255, 255, 0.3) !important;
+  color: #e0e0e0;
+}
+
+main.theme-neocyberpunk .text-gray-900,
+main.theme-neocyberpunk .text-gray-600,
+main.theme-neocyberpunk .text-gray-500 {
+  color: #e0e0e0 !important;
+}
+
+/* Baroque-Victorian Elegant Theme for Home */
+main.theme-baroque {
+  background: linear-gradient(135deg, #f5f1e8 0%, #e8e0d1 100%);
+}
+
+main.theme-baroque h1,
+main.theme-baroque h2,
+main.theme-baroque h3 {
+  color: #5c4a37;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+main.theme-baroque p,
+main.theme-baroque span,
+main.theme-baroque time {
+  color: #4a3e2e;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+main.theme-baroque a {
+  color: #8b4513;
+}
+
+main.theme-baroque .bg-white {
+  background: #f5f1e8 !important;
+  border: 2px solid #8b7355 !important;
+  color: #4a3e2e;
+}
+
+main.theme-baroque .text-gray-900,
+main.theme-baroque .text-gray-600,
+main.theme-baroque .text-gray-500 {
+  color: #4a3e2e !important;
+}
+
+/* Gothic Theme for Home */
+main.theme-gothic {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+main.theme-gothic h1,
+main.theme-gothic h2,
+main.theme-gothic h3 {
+  color: #8b0000;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+main.theme-gothic p,
+main.theme-gothic span,
+main.theme-gothic time {
+  color: #d3d3d3;
+}
+
+main.theme-gothic a {
+  color: #8b0000;
+  border-bottom: 1px solid #8b0000;
+}
+
+main.theme-gothic a:hover {
+  color: #ff0000;
+  border-bottom-color: #ff0000;
+}
+
+main.theme-gothic .bg-white {
+  background: rgba(45, 45, 45, 0.8) !important;
+  border: 2px solid #4a4a4a !important;
+  color: #d3d3d3;
+}
+
+main.theme-gothic .text-gray-900,
+main.theme-gothic .text-gray-600,
+main.theme-gothic .text-gray-500 {
+  color: #d3d3d3 !important;
+}
+
+/* Cheerful Theme for Home */
+main.theme-cheerful {
+  background: linear-gradient(135deg, #fff5e6 0%, #ffe6f2 50%, #e6f2ff 100%);
+}
+
+main.theme-cheerful h1 {
+  color: #ff6b9d;
+  text-shadow: 2px 2px 4px rgba(255, 107, 157, 0.3);
+}
+
+main.theme-cheerful h2 {
+  color: #4ecdc4;
+}
+
+main.theme-cheerful h3 {
+  color: #ffe66d;
+}
+
+main.theme-cheerful p,
+main.theme-cheerful span,
+main.theme-cheerful time {
+  color: #4a5568;
+}
+
+main.theme-cheerful a {
+  color: #ff6b9d;
+}
+
+main.theme-cheerful a:hover {
+  color: #4ecdc4;
+}
+
+main.theme-cheerful .bg-white {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 3px solid #ff6b9d !important;
+  color: #4a5568;
+}
+
+main.theme-cheerful .text-gray-900,
+main.theme-cheerful .text-gray-600,
+main.theme-cheerful .text-gray-500 {
+  color: #4a5568 !important;
 }
 

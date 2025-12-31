@@ -21,6 +21,8 @@ export function EditPostForm({ post }: { post: any }) {
   });
   const [generatingExcerpt, setGeneratingExcerpt] = useState(false);
   const [aiComments, setAiComments] = useState<AIComment[]>([]);
+  const [showOptionalFields, setShowOptionalFields] = useState(false);
+  const [agentTabs, setAgentTabs] = useState<Array<{ agentId: string; agentName: string; agentType: string; result: string }>>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -135,7 +137,21 @@ export function EditPostForm({ post }: { post: any }) {
   };
 
   const handleAgentResult = (agentId: string, agentName: string, agentType: string, result: string) => {
-    // Agregar o actualizar el comentario del agente
+    // Agregar o actualizar el tab del agente
+    setAgentTabs((prev) => {
+      const existing = prev.findIndex(tab => tab.agentId === agentId);
+      const newTab = { agentId, agentName, agentType, result };
+      
+      if (existing >= 0) {
+        const updated = [...prev];
+        updated[existing] = newTab;
+        return updated;
+      }
+      
+      return [...prev, newTab];
+    });
+
+    // También mantener en aiComments para compatibilidad
     setAiComments((prev) => {
       const existing = prev.findIndex(c => c.agentId === agentId);
       const newComment = { agentId, agentName, agentType, result };
@@ -194,62 +210,76 @@ export function EditPostForm({ post }: { post: any }) {
               />
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700">
-                  Resumen
-                </label>
-                <button
-                  type="button"
-                  onClick={handleGenerateExcerpt}
-                  disabled={loading || generatingExcerpt || !formData.content.trim()}
-                  className="px-3 py-1 text-xs font-medium bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {generatingExcerpt ? 'Generando...' : '✨ Generar con Grok'}
-                </button>
-              </div>
-              <textarea
-                id="excerpt"
-                value={formData.excerpt}
-                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                disabled={loading}
-                placeholder="Breve descripción del post"
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
-              />
+            <div className="flex items-center justify-between mb-2">
+              <button
+                type="button"
+                onClick={() => setShowOptionalFields(!showOptionalFields)}
+                className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              >
+                {showOptionalFields ? '▼' : '▶'} Campos opcionales
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                  Categoría
-                </label>
-                <input
-                  id="category"
-                  type="text"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  disabled={loading}
-                  placeholder="Ej: Tecnología, Derecho, etc."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
-                />
-              </div>
+            {showOptionalFields && (
+              <div className="space-y-4 pt-2 border-t border-gray-200">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="excerpt" className="block text-xs font-medium text-gray-600">
+                      Resumen
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleGenerateExcerpt}
+                      disabled={loading || generatingExcerpt || !formData.content.trim()}
+                      className="px-2 py-1 text-xs font-medium bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {generatingExcerpt ? 'Generando...' : '✨ Grok'}
+                    </button>
+                  </div>
+                  <textarea
+                    id="excerpt"
+                    value={formData.excerpt}
+                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                    disabled={loading}
+                    placeholder="Breve descripción del post"
+                    rows={2}
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
-                  Tags (separados por comas)
-                </label>
-                <input
-                  id="tags"
-                  type="text"
-                  value={formData.tags}
-                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  disabled={loading}
-                  placeholder="tag1, tag2, tag3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label htmlFor="category" className="block text-xs font-medium text-gray-600">
+                      Categoría
+                    </label>
+                    <input
+                      id="category"
+                      type="text"
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      disabled={loading}
+                      placeholder="Ej: Tecnología, Derecho"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label htmlFor="tags" className="block text-xs font-medium text-gray-600">
+                      Tags
+                    </label>
+                    <input
+                      id="tags"
+                      type="text"
+                      value={formData.tags}
+                      onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                      disabled={loading}
+                      placeholder="tag1, tag2, tag3"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -275,6 +305,7 @@ export function EditPostForm({ post }: { post: any }) {
               disabled={loading}
               placeholder="Escribe tu post aquí en Markdown..."
               aiComments={aiComments}
+              agentTabs={agentTabs}
             />
           </div>
         </div>

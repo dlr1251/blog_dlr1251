@@ -21,6 +21,7 @@ export default function NewPostPage() {
   });
   const [generatingExcerpt, setGeneratingExcerpt] = useState(false);
   const [aiComments, setAiComments] = useState<AIComment[]>([]);
+  const [showOptionalFields, setShowOptionalFields] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -106,8 +107,24 @@ export default function NewPostPage() {
     }
   };
 
+  const [agentTabs, setAgentTabs] = useState<Array<{ agentId: string; agentName: string; agentType: string; result: string }>>([]);
+
   const handleAgentResult = (agentId: string, agentName: string, agentType: string, result: string) => {
-    // Agregar o actualizar el comentario del agente
+    // Agregar o actualizar el tab del agente
+    setAgentTabs((prev) => {
+      const existing = prev.findIndex(tab => tab.agentId === agentId);
+      const newTab = { agentId, agentName, agentType, result };
+      
+      if (existing >= 0) {
+        const updated = [...prev];
+        updated[existing] = newTab;
+        return updated;
+      }
+      
+      return [...prev, newTab];
+    });
+
+    // También mantener en aiComments para compatibilidad
     setAiComments((prev) => {
       const existing = prev.findIndex(c => c.agentId === agentId);
       const newComment = { agentId, agentName, agentType, result };
@@ -123,15 +140,15 @@ export default function NewPostPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Nuevo Post</h1>
-          <p className="text-gray-600 mt-2">Crea un nuevo post para tu blog</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Nuevo Post</h1>
+          <p className="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base">Crea un nuevo post para tu blog</p>
         </div>
         <Link 
           href="/admin"
-          className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors w-full sm:w-auto text-center"
         >
           Volver al Dashboard
         </Link>
@@ -144,10 +161,10 @@ export default function NewPostPage() {
           </div>
         )}
 
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+        <div className="bg-white rounded-lg border p-4 sm:p-6 shadow-sm">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Información Básica</h2>
-            <p className="text-sm text-gray-500 mt-1">Datos principales del post</p>
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Información Básica</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">Datos principales del post</p>
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -166,73 +183,87 @@ export default function NewPostPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700">
-                  Resumen
-                </label>
-                <button
-                  type="button"
-                  onClick={handleGenerateExcerpt}
-                  disabled={loading || generatingExcerpt || !formData.content.trim()}
-                  className="px-3 py-1 text-xs font-medium bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {generatingExcerpt ? 'Generando...' : '✨ Generar con Grok'}
-                </button>
-              </div>
-              <textarea
-                id="excerpt"
-                value={formData.excerpt}
-                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                disabled={loading}
-                placeholder="Breve descripción del post"
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
-              />
+            <div className="flex items-center justify-between mb-2">
+              <button
+                type="button"
+                onClick={() => setShowOptionalFields(!showOptionalFields)}
+                className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              >
+                {showOptionalFields ? '▼' : '▶'} Campos opcionales
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                  Categoría
-                </label>
-                <input
-                  id="category"
-                  type="text"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  disabled={loading}
-                  placeholder="Ej: Tecnología, Derecho, etc."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
-                />
-              </div>
+            {showOptionalFields && (
+              <div className="space-y-4 pt-2 border-t border-gray-200">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="excerpt" className="block text-xs font-medium text-gray-600">
+                      Resumen
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleGenerateExcerpt}
+                      disabled={loading || generatingExcerpt || !formData.content.trim()}
+                      className="px-2 py-1 text-xs font-medium bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {generatingExcerpt ? 'Generando...' : '✨ Grok'}
+                    </button>
+                  </div>
+                  <textarea
+                    id="excerpt"
+                    value={formData.excerpt}
+                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                    disabled={loading}
+                    placeholder="Breve descripción del post"
+                    rows={2}
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
-                  Tags (separados por comas)
-                </label>
-                <input
-                  id="tags"
-                  type="text"
-                  value={formData.tags}
-                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  disabled={loading}
-                  placeholder="tag1, tag2, tag3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label htmlFor="category" className="block text-xs font-medium text-gray-600">
+                      Categoría
+                    </label>
+                    <input
+                      id="category"
+                      type="text"
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      disabled={loading}
+                      placeholder="Ej: Tecnología, Derecho"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label htmlFor="tags" className="block text-xs font-medium text-gray-600">
+                      Tags
+                    </label>
+                    <input
+                      id="tags"
+                      type="text"
+                      value={formData.tags}
+                      onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                      disabled={loading}
+                      placeholder="tag1, tag2, tag3"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+        <div className="bg-white rounded-lg border p-4 sm:p-6 shadow-sm">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Contenido</h2>
-            <p className="text-sm text-gray-500 mt-1">Escribe el contenido del post en Markdown</p>
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Contenido</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">Escribe el contenido del post en Markdown</p>
           </div>
           
           {/* AI Agents Panel */}
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <AIAgentsPanel content={formData.content} onResult={handleAgentResult} />
           </div>
 
@@ -247,14 +278,15 @@ export default function NewPostPage() {
               disabled={loading}
               placeholder="Escribe tu post aquí en Markdown..."
               aiComments={aiComments}
+              agentTabs={agentTabs}
             />
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+        <div className="bg-white rounded-lg border p-4 sm:p-6 shadow-sm">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Publicación</h2>
-            <p className="text-sm text-gray-500 mt-1">Configura el estado de publicación</p>
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Publicación</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">Configura el estado de publicación</p>
           </div>
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -298,17 +330,17 @@ export default function NewPostPage() {
           </div>
         </div>
 
-        <div className="flex justify-end space-x-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 sm:space-x-0">
           <Link 
             href="/admin"
-            className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-center w-full sm:w-auto"
           >
             Cancelar
           </Link>
           <button 
             type="submit" 
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             {loading ? 'Guardando...' : 'Guardar Post'}
           </button>

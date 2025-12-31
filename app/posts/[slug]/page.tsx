@@ -6,6 +6,9 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CommentForm } from './components/CommentForm';
+import { ShareButtons } from './components/ShareButtons';
+import { StyleSelector } from './components/StyleSelector';
+import { CommentItem } from './components/CommentItem';
 
 export default async function PostPage({
   params,
@@ -39,7 +42,7 @@ export default async function PostPage({
     .eq('id', post.author_id)
     .single();
 
-  // Get approved comments
+  // Get approved comments with vote counts, ordered by score (upvotes - downvotes)
   const { data: comments } = await supabase
     .from('comments')
     .select('*')
@@ -64,6 +67,17 @@ export default async function PostPage({
       };
     })
   );
+
+  // Sort comments by score (upvotes - downvotes), then by date
+  const sortedComments = [...commentsWithReplies].sort((a: any, b: any) => {
+    const scoreA = (a.upvotes || 0) - (a.downvotes || 0);
+    const scoreB = (b.upvotes || 0) - (b.downvotes || 0);
+    if (scoreB !== scoreA) {
+      return scoreB - scoreA; // Higher score first
+    }
+    // If scores are equal, sort by date (newest first)
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
   // Increment view count (fire and forget)
   supabase
@@ -110,7 +124,7 @@ export default async function PostPage({
             {post.excerpt && (
               <p className="text-xl text-gray-600 mb-6">{post.excerpt}</p>
             )}
-            <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
+            <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap mb-4">
               {post.published_at && (
                 <time dateTime={post.published_at}>
                   {format(new Date(post.published_at), "d 'de' MMMM, yyyy")}
@@ -122,9 +136,34 @@ export default async function PostPage({
               {post.category && (
                 <span className="text-blue-600">#{post.category}</span>
               )}
-              {post.views && post.views > 0 && (
-                <span>{post.views} visualizaciones</span>
-              )}
+              <span className="flex items-center gap-1">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+                {post.views || 0} visualizaciones
+              </span>
+            </div>
+            
+            {/* Share and Style Selector */}
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 pt-4 border-t">
+              <ShareButtons title={post.title} slug={post.slug} />
+              <StyleSelector />
             </div>
             {post.tags && post.tags.length > 0 && (
               <div className="flex gap-2 mt-4 flex-wrap">
@@ -221,60 +260,22 @@ export default async function PostPage({
           {/* Comments Section */}
           <section className="border-t pt-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Comentarios ({commentsWithReplies.length})
+              Comentarios ({sortedComments.length})
             </h2>
 
-            {commentsWithReplies.length === 0 ? (
+            {sortedComments.length === 0 ? (
               <p className="text-gray-500 mb-6">
                 Aún no hay comentarios. ¡Sé el primero en comentar!
               </p>
             ) : (
-              <div className="space-y-6 mb-8">
-                {commentsWithReplies.map((comment: any) => (
-                  <div
+              <div className="space-y-4 mb-8">
+                {sortedComments.map((comment: any) => (
+                  <CommentItem
                     key={comment.id}
-                    className="border-l-4 border-blue-500 pl-4 py-2"
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-semibold text-gray-900">
-                        {comment.author_name}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {format(
-                          new Date(comment.created_at),
-                          "d MMM, yyyy 'a las' HH:mm"
-                        )}
-                      </span>
-                    </div>
-                    <p className="text-gray-700 whitespace-pre-wrap">
-                      {comment.content}
-                    </p>
-                    {comment.replies && comment.replies.length > 0 && (
-                      <div className="mt-4 ml-4 space-y-4">
-                        {comment.replies.map((reply: any) => (
-                          <div
-                            key={reply.id}
-                            className="border-l-2 border-gray-300 pl-4 py-2"
-                          >
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="font-semibold text-sm text-gray-900">
-                                {reply.author_name}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {format(
-                                  new Date(reply.created_at),
-                                  "d MMM, yyyy 'a las' HH:mm"
-                                )}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                              {reply.content}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                    comment={comment}
+                    postId={post.id}
+                    userEmail={user?.email || null}
+                  />
                 ))}
               </div>
             )}
