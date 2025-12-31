@@ -12,7 +12,7 @@ interface AIAgent {
 
 interface AIAgentsPanelProps {
   content: string;
-  onResult: (agentId: string, result: string) => void;
+  onResult: (agentId: string, agentName: string, agentType: string, result: string) => void;
 }
 
 export function AIAgentsPanel({ content, onResult }: AIAgentsPanelProps) {
@@ -58,8 +58,9 @@ export function AIAgentsPanel({ content, onResult }: AIAgentsPanelProps) {
       const data = await response.json();
 
       if (data.success && data.result) {
+        const agent = agents.find(a => a.id === agentId);
         setResults((prev) => ({ ...prev, [agentId]: data.result }));
-        onResult(agentId, data.result);
+        onResult(agentId, agent?.name || 'Agente', agent?.type || 'unknown', data.result);
       } else {
         setErrors((prev) => ({ ...prev, [agentId]: data.error || 'Error al ejecutar agente' }));
       }
@@ -90,45 +91,46 @@ export function AIAgentsPanel({ content, onResult }: AIAgentsPanelProps) {
   }
 
   return (
-    <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-gray-900">Agentes IA Disponibles</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-900">Agentes IA</h3>
+        <span className="text-xs text-gray-500">{agents.length} disponible{agents.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
         {agents.map((agent) => (
           <div
             key={agent.id}
-            className="border border-gray-200 rounded-lg p-3 bg-white"
+            className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 bg-white"
           >
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">{agent.name}</h4>
-                <p className="text-xs text-gray-500">
-                  {agentTypes[agent.type] || agent.type}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => executeAgent(agent.id)}
-                disabled={loading[agent.id] || !content.trim()}
-                className="px-3 py-1 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {loading[agent.id] ? 'Analizando...' : 'Ejecutar'}
-              </button>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-xs font-medium text-gray-900 truncate">{agent.name}</h4>
+              <p className="text-xs text-gray-500">
+                {agentTypes[agent.type] || agent.type}
+              </p>
             </div>
-            {agent.description && (
-              <p className="text-xs text-gray-600 mb-2">{agent.description}</p>
-            )}
+            <button
+              type="button"
+              onClick={() => executeAgent(agent.id)}
+              disabled={loading[agent.id] || !content.trim()}
+              className="px-2 py-1 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+              title={agent.description}
+            >
+              {loading[agent.id] ? '...' : '▶'}
+            </button>
             {errors[agent.id] && (
-              <p className="text-xs text-red-600 mt-1">{errors[agent.id]}</p>
+              <span className="text-xs text-red-600" title={errors[agent.id]}>⚠</span>
             )}
             {results[agent.id] && (
-              <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
-                <p className="text-xs font-medium text-gray-700 mb-1">Resultado:</p>
-                <p className="text-xs text-gray-600 whitespace-pre-wrap">{results[agent.id]}</p>
-              </div>
+              <span className="text-xs text-green-600" title="Análisis completado">✓</span>
             )}
           </div>
         ))}
       </div>
+      {Object.keys(errors).length > 0 && (
+        <div className="text-xs text-red-600">
+          {Object.values(errors).filter(Boolean).join(', ')}
+        </div>
+      )}
     </div>
   );
 }

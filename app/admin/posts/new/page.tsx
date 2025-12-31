@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { MarkdownEditor } from './components/MarkdownEditor';
+import { MarkdownEditor, type AIComment } from './components/MarkdownEditor';
 import { AIAgentsPanel } from './components/AIAgentsPanel';
 
 export default function NewPostPage() {
@@ -20,6 +20,7 @@ export default function NewPostPage() {
     scheduledPublishAt: '',
   });
   const [generatingExcerpt, setGeneratingExcerpt] = useState(false);
+  const [aiComments, setAiComments] = useState<AIComment[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -105,10 +106,20 @@ export default function NewPostPage() {
     }
   };
 
-  const handleAgentResult = (agentId: string, result: string) => {
-    // Puedes usar el resultado del agente como quieras
-    // Por ejemplo, mostrar una notificación o actualizar el contenido
-    console.log(`Resultado del agente ${agentId}:`, result);
+  const handleAgentResult = (agentId: string, agentName: string, agentType: string, result: string) => {
+    // Agregar o actualizar el comentario del agente
+    setAiComments((prev) => {
+      const existing = prev.findIndex(c => c.agentId === agentId);
+      const newComment = { agentId, agentName, agentType, result };
+      
+      if (existing >= 0) {
+        const updated = [...prev];
+        updated[existing] = newComment;
+        return updated;
+      }
+      
+      return [...prev, newComment];
+    });
   };
 
   return (
@@ -235,6 +246,7 @@ export default function NewPostPage() {
               onChange={(value) => setFormData({ ...formData, content: value })}
               disabled={loading}
               placeholder="Escribe tu post aquí en Markdown..."
+              aiComments={aiComments}
             />
           </div>
         </div>

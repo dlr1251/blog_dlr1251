@@ -4,14 +4,22 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+export interface AIComment {
+  agentId: string;
+  agentName: string;
+  result: string;
+  agentType: string;
+}
+
 interface MarkdownEditorProps {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  aiComments?: AIComment[];
 }
 
-export function MarkdownEditor({ value, onChange, disabled, placeholder }: MarkdownEditorProps) {
+export function MarkdownEditor({ value, onChange, disabled, placeholder, aiComments = [] }: MarkdownEditorProps) {
   const [view, setView] = useState<'edit' | 'preview' | 'split'>('split');
 
   return (
@@ -73,15 +81,48 @@ export function MarkdownEditor({ value, onChange, disabled, placeholder }: Markd
           </div>
         )}
         {(view === 'preview' || view === 'split') && (
-          <div className={`${view === 'split' ? 'w-1/2' : 'w-full'} overflow-y-auto bg-white p-4`}>
-            {value ? (
-              <div className="prose prose-sm max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {value}
-                </ReactMarkdown>
+          <div className={`${view === 'split' ? 'w-1/2' : 'w-full'} overflow-y-auto bg-white`}>
+            <div className="p-4">
+              {value ? (
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {value}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-gray-400 italic">La vista previa aparecerá aquí...</p>
+              )}
+            </div>
+            
+            {/* AI Comments Panel */}
+            {aiComments.length > 0 && (
+              <div className="border-t border-gray-200 bg-gray-50">
+                <div className="p-4 space-y-3 max-h-[300px] overflow-y-auto">
+                  <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wide">
+                    Comentarios de Agentes IA
+                  </h4>
+                  {aiComments.map((comment, index) => (
+                    <div
+                      key={`${comment.agentId}-${index}`}
+                      className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-gray-900">
+                            {comment.agentName}
+                          </span>
+                          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
+                            {comment.agentType}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">
+                        {comment.result}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <p className="text-gray-400 italic">La vista previa aparecerá aquí...</p>
             )}
           </div>
         )}
