@@ -165,17 +165,18 @@ Los usuarios pueden registrarse para:
 - `npm run lint` - Ejecutar linter
 - `npm run create:admin` - Crear usuario administrador
 
-## Próximas Mejoras
+## Roadmap
 
+Funcionalidades planeadas para el futuro:
+
+- [ ] Generación de imágenes con Grok para portadas (con prompt y ayudas contextuales, opcional)
 - [ ] Sistema de registro de usuarios
 - [ ] Sistema de notificaciones por email
-- [ ] Editor de markdown mejorado con preview
 - [ ] Sistema de tags y categorías avanzado
 - [ ] Analytics y estadísticas de posts
 - [ ] Exportación/importación de contenido
 - [ ] Modo oscuro
 - [ ] SEO optimizado
-- [ ] Integración de agentes IA en el editor de posts
 
 ## Despliegue en Vercel
 
@@ -202,6 +203,7 @@ git push -u origin main
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
+   - `XAI_API_KEY`
 5. Haz clic en "Deploy"
 
 ### 3. Configurar Variables de Entorno en Vercel
@@ -212,6 +214,7 @@ En el dashboard de Vercel, ve a tu proyecto > Settings > Environment Variables y
 NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
 SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
+XAI_API_KEY=tu_xai_api_key
 ```
 
 **Importante**: 

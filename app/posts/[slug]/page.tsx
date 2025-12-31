@@ -7,14 +7,14 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CommentForm } from './components/CommentForm';
 import { ShareButtons } from './components/ShareButtons';
-import { StyleSelector } from './components/StyleSelector';
 import { CommentItem } from './components/CommentItem';
 
 export default async function PostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   const supabase = createPublicServerClient();
   const user = await getCurrentUser();
   const isAdmin = user?.role === 'admin';
@@ -23,7 +23,7 @@ export default async function PostPage({
   const { data: post, error } = await supabase
     .from('posts')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single();
 
   if (error || !post) {
@@ -87,44 +87,50 @@ export default async function PostPage({
     .then(() => {}); // Fire and forget
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold">
-              Blog de Daniel Luque
-            </Link>
-            <nav className="space-x-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">
-                Inicio
-              </Link>
-              {isAdmin && (
-                <Link href="/admin" className="text-gray-600 hover:text-gray-900">
-                  Admin
-                </Link>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <article className="bg-white rounded-lg border shadow-sm p-8 md:p-12">
+    <div style={{ backgroundColor: 'var(--theme-bg)', transition: 'background-color 500ms ease-in-out' }}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <article 
+          className="p-8 md:p-12"
+          style={{
+            backgroundColor: 'var(--theme-surface)',
+            border: 'var(--theme-border-width) solid var(--theme-border)',
+            borderRadius: 'var(--theme-radius)',
+            boxShadow: 'var(--theme-shadow)',
+            transition: 'all 500ms ease-in-out',
+          }}
+        >
           {/* Header */}
           <header className="mb-8">
             <Link
               href="/"
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium mb-4 inline-block"
+              className="text-sm font-medium mb-4 inline-block hover:opacity-80 transition-opacity"
+              style={{ color: 'var(--theme-accent)' }}
             >
               ← Volver al inicio
             </Link>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h1 
+              className="text-4xl md:text-5xl mb-4"
+              style={{
+                color: 'var(--theme-text)',
+                fontFamily: 'var(--theme-font-heading)',
+                fontWeight: 'var(--theme-heading-weight)',
+                letterSpacing: 'var(--theme-heading-tracking)',
+              }}
+            >
               {post.title}
             </h1>
             {post.excerpt && (
-              <p className="text-xl text-gray-600 mb-6">{post.excerpt}</p>
+              <p 
+                className="text-xl mb-6"
+                style={{ color: 'var(--theme-text-muted)' }}
+              >
+                {post.excerpt}
+              </p>
             )}
-            <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap mb-4">
+            <div 
+              className="flex items-center gap-4 text-sm flex-wrap mb-4"
+              style={{ color: 'var(--theme-text-muted)' }}
+            >
               {post.published_at && (
                 <time dateTime={post.published_at}>
                   {format(new Date(post.published_at), "d 'de' MMMM, yyyy")}
@@ -134,7 +140,7 @@ export default async function PostPage({
                 <span>Por {authorProfile.name}</span>
               )}
               {post.category && (
-                <span className="text-blue-600">#{post.category}</span>
+                <span style={{ color: 'var(--theme-accent)' }}>#{post.category}</span>
               )}
               <span className="flex items-center gap-1">
                 <svg
@@ -160,17 +166,27 @@ export default async function PostPage({
               </span>
             </div>
             
-            {/* Share and Style Selector */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 pt-4 border-t">
+            {/* Share Buttons */}
+            <div 
+              className="mb-6 pt-4"
+              style={{ 
+                borderTop: 'var(--theme-border-width) solid var(--theme-border)',
+              }}
+            >
               <ShareButtons title={post.title} slug={post.slug} />
-              <StyleSelector />
             </div>
             {post.tags && post.tags.length > 0 && (
               <div className="flex gap-2 mt-4 flex-wrap">
                 {post.tags.map((tag: string, index: number) => (
                   <span
                     key={index}
-                    className="bg-gray-100 text-gray-700 text-xs font-medium px-2 py-1 rounded"
+                    className="text-xs font-medium px-2 py-1"
+                    style={{
+                      backgroundColor: 'var(--theme-surface)',
+                      color: 'var(--theme-text)',
+                      borderRadius: 'var(--theme-radius)',
+                      border: 'var(--theme-border-width) solid var(--theme-border)',
+                    }}
                   >
                     #{tag}
                   </span>
@@ -180,91 +196,33 @@ export default async function PostPage({
           </header>
 
           {/* Content */}
-          <div className="mb-12 markdown-content">
+          <div className="mb-12 prose markdown-content">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              components={{
-                h1: ({ node, ...props }) => (
-                  <h1 className="text-3xl font-bold mt-8 mb-4 text-gray-900" {...props} />
-                ),
-                h2: ({ node, ...props }) => (
-                  <h2 className="text-2xl font-bold mt-6 mb-3 text-gray-900" {...props} />
-                ),
-                h3: ({ node, ...props }) => (
-                  <h3 className="text-xl font-bold mt-4 mb-2 text-gray-900" {...props} />
-                ),
-                p: ({ node, ...props }) => (
-                  <p className="mb-4 text-gray-700 leading-7" {...props} />
-                ),
-                ul: ({ node, ...props }) => (
-                  <ul className="list-disc list-inside mb-4 space-y-2 text-gray-700" {...props} />
-                ),
-                ol: ({ node, ...props }) => (
-                  <ol className="list-decimal list-inside mb-4 space-y-2 text-gray-700" {...props} />
-                ),
-                li: ({ node, ...props }) => (
-                  <li className="ml-4" {...props} />
-                ),
-                blockquote: ({ node, ...props }) => (
-                  <blockquote
-                    className="border-l-4 border-gray-300 pl-4 italic my-4 text-gray-600"
-                    {...props}
-                  />
-                ),
-                code: ({ node, inline, ...props }: any) =>
-                  inline ? (
-                    <code
-                      className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono"
-                      {...props}
-                    />
-                  ) : (
-                    <code
-                      className="block bg-gray-100 text-gray-800 p-4 rounded-lg text-sm font-mono overflow-x-auto mb-4"
-                      {...props}
-                    />
-                  ),
-                a: ({ node, ...props }) => (
-                  <a
-                    className="text-blue-600 hover:text-blue-700 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    {...props}
-                  />
-                ),
-                strong: ({ node, ...props }) => (
-                  <strong className="font-bold text-gray-900" {...props} />
-                ),
-                em: ({ node, ...props }) => (
-                  <em className="italic" {...props} />
-                ),
-                hr: ({ node, ...props }) => (
-                  <hr className="my-8 border-gray-300" {...props} />
-                ),
-                table: ({ node, ...props }) => (
-                  <div className="overflow-x-auto mb-4">
-                    <table className="min-w-full border border-gray-300" {...props} />
-                  </div>
-                ),
-                th: ({ node, ...props }) => (
-                  <th className="border border-gray-300 px-4 py-2 bg-gray-100 font-bold text-left" {...props} />
-                ),
-                td: ({ node, ...props }) => (
-                  <td className="border border-gray-300 px-4 py-2" {...props} />
-                ),
-              }}
             >
               {post.content}
             </ReactMarkdown>
           </div>
 
           {/* Comments Section */}
-          <section className="border-t pt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <section 
+            className="pt-8"
+            style={{ 
+              borderTop: 'var(--theme-border-width) solid var(--theme-border)',
+            }}
+          >
+            <h2 
+              className="text-2xl font-bold mb-6"
+              style={{
+                color: 'var(--theme-text)',
+                fontFamily: 'var(--theme-font-heading)',
+              }}
+            >
               Comentarios ({sortedComments.length})
             </h2>
 
             {sortedComments.length === 0 ? (
-              <p className="text-gray-500 mb-6">
+              <p className="mb-6" style={{ color: 'var(--theme-text-muted)' }}>
                 Aún no hay comentarios. ¡Sé el primero en comentar!
               </p>
             ) : (
@@ -284,7 +242,7 @@ export default async function PostPage({
             <CommentForm postId={post.id} />
           </section>
         </article>
-      </main>
+      </div>
     </div>
   );
 }

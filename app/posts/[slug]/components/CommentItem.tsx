@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { formatRelativeTime, formatTimeWithRelative } from '@/lib/utils/time';
 import { CommentForm } from './CommentForm';
-import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, MessageSquare } from 'lucide-react';
+import { ChevronUp, ChevronDown, MessageCircle } from 'lucide-react';
 
 interface CommentItemProps {
   comment: {
@@ -28,13 +27,11 @@ export function CommentItem({ comment, postId, userEmail, depth = 0 }: CommentIt
   const [currentVote, setCurrentVote] = useState<'upvote' | 'downvote' | null>(null);
   const [upvotes, setUpvotes] = useState(comment.upvotes || 0);
   const [downvotes, setDownvotes] = useState(comment.downvotes || 0);
-  const [loading, setLoading] = useState(false);
   const [voteLoading, setVoteLoading] = useState(false);
 
   const timeInfo = formatTimeWithRelative(comment.created_at);
-  const maxDepth = 3; // Maximum nesting depth
+  const maxDepth = 3;
 
-  // Fetch current vote status on mount
   useEffect(() => {
     const fetchVoteStatus = async () => {
       try {
@@ -47,7 +44,7 @@ export function CommentItem({ comment, postId, userEmail, depth = 0 }: CommentIt
           setCurrentVote(data.voteType);
         }
       } catch (error) {
-        // Ignore errors - user might not have voted yet
+        // Ignore errors
       }
     };
 
@@ -76,9 +73,7 @@ export function CommentItem({ comment, postId, userEmail, depth = 0 }: CommentIt
 
       const data = await response.json();
 
-      // Update vote state
       if (data.action === 'removed') {
-        // Vote was removed
         if (currentVote === 'upvote') {
           setUpvotes((prev) => Math.max(0, prev - 1));
         } else if (currentVote === 'downvote') {
@@ -86,7 +81,6 @@ export function CommentItem({ comment, postId, userEmail, depth = 0 }: CommentIt
         }
         setCurrentVote(null);
       } else if (data.action === 'updated') {
-        // Vote type changed
         if (currentVote === 'upvote') {
           setUpvotes((prev) => Math.max(0, prev - 1));
           setDownvotes((prev) => prev + 1);
@@ -96,7 +90,6 @@ export function CommentItem({ comment, postId, userEmail, depth = 0 }: CommentIt
         }
         setCurrentVote(voteType);
       } else if (data.action === 'created') {
-        // New vote
         if (voteType === 'upvote') {
           setUpvotes((prev) => prev + 1);
         } else {
@@ -105,7 +98,6 @@ export function CommentItem({ comment, postId, userEmail, depth = 0 }: CommentIt
         setCurrentVote(voteType);
       }
 
-      // Refresh to get updated counts from server
       window.location.reload();
     } catch (error) {
       console.error('Error voting:', error);
@@ -117,96 +109,87 @@ export function CommentItem({ comment, postId, userEmail, depth = 0 }: CommentIt
   const netScore = upvotes - downvotes;
 
   return (
-    <div className={`${depth > 0 ? 'ml-6 mt-4' : ''}`}>
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
+    <div className={depth > 0 ? 'ml-3 sm:ml-6 mt-3' : ''}>
+      <div className="border-b border-gray-100 pb-3">
         {/* Header */}
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-2 flex-1">
-            <span className="font-semibold text-gray-900">
-              {comment.is_anonymous ? 'Anónimo' : comment.author_name}
-            </span>
-            <span className="text-xs text-gray-500" title={timeInfo.absolute}>
-              {timeInfo.relative}
-            </span>
-            {comment.is_anonymous && (
-              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-                Anónimo
-              </span>
-            )}
-          </div>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm font-medium text-gray-900">
+            {comment.is_anonymous ? 'Anónimo' : comment.author_name}
+          </span>
+          <span className="text-xs text-gray-400" title={timeInfo.absolute}>
+            {timeInfo.relative}
+          </span>
         </div>
 
         {/* Content */}
-        <div className="mb-3">
-          <p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">
+        <div className="mb-2">
+          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
             {comment.content}
           </p>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-4 pt-2 border-t border-gray-100">
-          {/* Voting */}
+        <div className="flex items-center gap-3 mt-2">
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`h-8 px-2 ${
-                currentVote === 'upvote' ? 'text-blue-600' : 'text-gray-500'
-              }`}
+            <button
               onClick={() => handleVote('upvote')}
               disabled={voteLoading}
+              className={`p-1 rounded transition-colors ${
+                currentVote === 'upvote'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-400 hover:text-gray-600'
+              }`}
+              aria-label="Votar positivo"
             >
-              <ChevronUp className="h-4 w-4" />
-            </Button>
+              <ChevronUp className="w-4 h-4" />
+            </button>
             <span
-              className={`text-sm font-medium min-w-[2rem] text-center ${
+              className={`text-xs font-medium min-w-[1.5rem] text-center ${
                 netScore > 0
-                  ? 'text-green-600'
+                  ? 'text-blue-600'
                   : netScore < 0
-                  ? 'text-red-600'
-                  : 'text-gray-500'
+                  ? 'text-gray-500'
+                  : 'text-gray-400'
               }`}
             >
               {netScore > 0 ? '+' : ''}
               {netScore}
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`h-8 px-2 ${
-                currentVote === 'downvote' ? 'text-red-600' : 'text-gray-500'
-              }`}
+            <button
               onClick={() => handleVote('downvote')}
               disabled={voteLoading}
+              className={`p-1 rounded transition-colors ${
+                currentVote === 'downvote'
+                  ? 'text-gray-600 bg-gray-100'
+                  : 'text-gray-400 hover:text-gray-600'
+              }`}
+              aria-label="Votar negativo"
             >
-              <ChevronDown className="h-4 w-4" />
-            </Button>
+              <ChevronDown className="w-4 h-4" />
+            </button>
           </div>
 
-          {/* Reply button */}
           {depth < maxDepth && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 text-gray-600 hover:text-gray-900"
+            <button
               onClick={() => setShowReplyForm(!showReplyForm)}
+              className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 transition-colors"
             >
-              <MessageSquare className="h-4 w-4 mr-1" />
+              <MessageCircle className="w-3.5 h-3.5" />
               Responder
-            </Button>
+            </button>
           )}
         </div>
 
         {/* Reply form */}
         {showReplyForm && depth < maxDepth && (
-          <div className="mt-4">
+          <div className="mt-3 pt-3 border-t border-gray-100">
             <CommentForm postId={postId} parentId={comment.id} />
           </div>
         )}
 
         {/* Replies */}
         {comment.replies && comment.replies.length > 0 && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-3 space-y-3">
             {comment.replies.map((reply) => (
               <CommentItem
                 key={reply.id}
@@ -222,4 +205,3 @@ export function CommentItem({ comment, postId, userEmail, depth = 0 }: CommentIt
     </div>
   );
 }
-

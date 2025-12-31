@@ -15,7 +15,7 @@ export function CommentForm({ postId, parentId }: { postId: string; parentId?: s
     authorName: '',
     authorEmail: '',
     content: '',
-    honeypot: '', // Honeypot field for spam protection
+    honeypot: '',
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,7 +36,7 @@ export function CommentForm({ postId, parentId }: { postId: string; parentId?: s
           authorEmail: formData.authorEmail.trim(),
           content: formData.content.trim(),
           isAnonymous,
-          honeypot: formData.honeypot, // Bots will fill this
+          honeypot: formData.honeypot,
         }),
       });
 
@@ -58,26 +58,23 @@ export function CommentForm({ postId, parentId }: { postId: string; parentId?: s
 
   if (success) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-        <p className="text-green-800 font-medium">
-          ¡Comentario enviado! Está pendiente de aprobación y aparecerá pronto.
+      <div className="bg-green-50 border border-green-200 rounded-md p-3 mb-3">
+        <p className="text-sm text-green-700">
+          Comentario enviado. Pendiente de aprobación.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        {parentId ? 'Responder comentario' : 'Deja un comentario'}
-      </h3>
+    <div className="space-y-3">
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+        <div className="bg-red-50 border border-red-200 rounded-md p-3">
           <p className="text-sm text-red-600">{error}</p>
         </div>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Honeypot field - hidden from users but bots will fill it */}
+      <form onSubmit={handleSubmit} className="space-y-3">
+        {/* Honeypot */}
         <div className="hidden" aria-hidden="true">
           <label htmlFor="website">Website</label>
           <input
@@ -87,13 +84,11 @@ export function CommentForm({ postId, parentId }: { postId: string; parentId?: s
             tabIndex={-1}
             autoComplete="off"
             value={formData.honeypot}
-            onChange={(e) =>
-              setFormData({ ...formData, honeypot: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, honeypot: e.target.value })}
           />
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Checkbox
             id="anonymous"
             checked={isAnonymous}
@@ -102,87 +97,53 @@ export function CommentForm({ postId, parentId }: { postId: string; parentId?: s
           />
           <Label
             htmlFor="anonymous"
-            className="text-sm font-medium text-gray-700 cursor-pointer"
+            className="text-xs text-gray-600 cursor-pointer"
           >
-            Comentar como anónimo
+            Anónimo
           </Label>
         </div>
 
         {!isAnonymous && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="authorName"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Nombre *
-              </label>
-              <input
-                type="text"
-                id="authorName"
-                value={formData.authorName}
-                onChange={(e) =>
-                  setFormData({ ...formData, authorName: e.target.value })
-                }
-                required={!isAnonymous}
-                disabled={loading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="authorEmail"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Email *
-              </label>
-              <input
-                type="email"
-                id="authorEmail"
-                value={formData.authorEmail}
-                onChange={(e) =>
-                  setFormData({ ...formData, authorEmail: e.target.value })
-                }
-                required={!isAnonymous}
-                disabled={loading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-              />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input
+              type="text"
+              placeholder="Nombre *"
+              value={formData.authorName}
+              onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
+              required={!isAnonymous}
+              disabled={loading}
+              className="w-full px-3 py-2 text-sm border border-gray-200 bg-white text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500"
+            />
+            <input
+              type="email"
+              placeholder="Email *"
+              value={formData.authorEmail}
+              onChange={(e) => setFormData({ ...formData, authorEmail: e.target.value })}
+              required={!isAnonymous}
+              disabled={loading}
+              className="w-full px-3 py-2 text-sm border border-gray-200 bg-white text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500"
+            />
           </div>
         )}
 
-        <div>
-          <label
-            htmlFor="content"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Comentario *
-          </label>
-          <textarea
-            id="content"
-            value={formData.content}
-            onChange={(e) =>
-              setFormData({ ...formData, content: e.target.value })
-            }
-            required
-            disabled={loading}
-            rows={4}
-            placeholder="Escribe tu comentario aquí... (puedes usar emojis 😊)"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            Mínimo 10 caracteres. Los comentarios están sujetos a moderación.
-          </p>
-        </div>
+        <textarea
+          placeholder="Escribe tu comentario..."
+          value={formData.content}
+          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+          required
+          disabled={loading}
+          rows={3}
+          className="w-full px-3 py-2 text-sm border border-gray-200 bg-white text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500 resize-none"
+        />
+
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Enviando...' : parentId ? 'Responder' : 'Enviar comentario'}
+          {loading ? 'Enviando...' : parentId ? 'Responder' : 'Enviar'}
         </button>
       </form>
     </div>
   );
 }
-

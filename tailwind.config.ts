@@ -57,6 +57,17 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "1rem",
+        "2xl": "1.5rem",
+      },
+      boxShadow: {
+        'soft': '0 2px 8px rgba(0, 0, 0, 0.04)',
+        'medium': '0 4px 16px rgba(0, 0, 0, 0.08)',
+        'strong': '0 8px 32px rgba(0, 0, 0, 0.12)',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
       },
       keyframes: {
         "accordion-down": {

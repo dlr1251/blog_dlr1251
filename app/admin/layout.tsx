@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/lib/supabase-auth';
 import Link from 'next/link';
 import { SignOutButton } from './components/SignOutButton';
 import { MobileMenu } from './components/MobileMenu';
+import { Toaster } from '@/components/ui/toaster';
 
 export default async function AdminLayout({
   children,
@@ -75,6 +76,7 @@ export default async function AdminLayout({
       <main className="max-w-7xl mx-auto py-4 sm:py-6 px-2 sm:px-4 lg:px-6">
         {children}
       </main>
+      <Toaster />
     </div>
   );
 }

@@ -1,0 +1,151 @@
+/* Theme System - CSS Variables for 3 Professional Styles */
+
+/* ========================================
+   THEME 1: MINIMALISTA MODERNO (Swiss Clean)
+   ======================================== */
+:root[data-theme="minimalist"] {
+  /* Light Mode */
+  --theme-bg: #FFFFFF;
+  --theme-surface: #F5F5F5;
+  --theme-text: #1A1A1A;
+  --theme-text-muted: #6B6B6B;
+  --theme-accent: #1A1A1A;
+  --theme-border: #E5E5E5;
+  --theme-hover: #F9F9F9;
+  
+  /* Typography */
+  --theme-font-heading: 'Inter', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --theme-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --theme-heading-weight: 900;
+  --theme-heading-tracking: -0.05em;
+  
+  /* Spacing & Layout */
+  --theme-radius: 0px;
+  --theme-border-width: 0px;
+  
+  /* Effects */
+  --theme-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --theme-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="minimalist"][data-dark="true"] {
+  /* Dark Mode */
+  --theme-bg: #1A1A1A;
+  --theme-surface: #262626;
+  --theme-text: #FFFFFF;
+  --theme-text-muted: #A5A5A5;
+  --theme-accent: #FFFFFF;
+  --theme-border: #333333;
+  --theme-hover: #2A2A2A;
+  --theme-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --theme-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
+   THEME 2: BARROCO ELEGANTE (Dark Opulence)
+   ======================================== */
+:root[data-theme="baroque"] {
+  /* Light Mode */
+  --theme-bg: #FDFCF0;
+  --theme-surface: #F8F6E8;
+  --theme-text: #1A1814;
+  --theme-text-muted: #5A5240;
+  --theme-accent: #D4AF37;
+  --theme-border: #C9B77A;
+  --theme-hover: #F5F1E0;
+  
+  /* Typography */
+  --theme-font-heading: 'Playfair Display', 'Cinzel', Georgia, serif;
+  --theme-font-body: 'Lora', Georgia, serif;
+  --theme-heading-weight: 700;
+  --theme-heading-tracking: 0.02em;
+  
+  /* Spacing & Layout */
+  --theme-radius: 0px;
+  --theme-border-width: 2px;
+  
+  /* Effects */
+  --theme-shadow: 0 4px 16px rgba(212, 175, 55, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  --theme-shadow-hover: 0 8px 32px rgba(212, 175, 55, 0.25), inset 0 1px 3px rgba(255, 255, 255, 0.9);
+}
+
+:root[data-theme="baroque"][data-dark="true"] {
+  /* Dark Mode */
+  --theme-bg: #0A0F0D;
+  --theme-surface: #141914;
+  --theme-text: #FDFCF0;
+  --theme-text-muted: #B8B5A0;
+  --theme-accent: #D4AF37;
+  --theme-border: #8B7530;
+  --theme-hover: #1A231F;
+  --theme-shadow: 0 4px 16px rgba(212, 175, 55, 0.2), inset 0 1px 2px rgba(212, 175, 55, 0.1);
+  --theme-shadow-hover: 0 8px 32px rgba(212, 175, 55, 0.3), inset 0 1px 3px rgba(212, 175, 55, 0.15);
+}
+
+/* ========================================
+   THEME 3: MODERN CLASSIC (Warm Minimalist)
+   ======================================== */
+:root[data-theme="classic"] {
+  /* Light Mode */
+  --theme-bg: #F8F5F0;
+  --theme-surface: #FFFFFF;
+  --theme-text: #3E3B39;
+  --theme-text-muted: #7A7570;
+  --theme-accent: #A67C52;
+  --theme-border: #D4C4B0;
+  --theme-hover: #F2EDE5;
+  
+  /* Typography */
+  --theme-font-heading: 'Crimson Text', 'Playfair Display', Georgia, serif;
+  --theme-font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  --theme-heading-weight: 600;
+  --theme-heading-tracking: 0.01em;
+  
+  /* Spacing & Layout */
+  --theme-radius: 2px;
+  --theme-border-width: 0.5px;
+  
+  /* Effects */
+  --theme-shadow: 0 2px 8px rgba(166, 124, 82, 0.08);
+  --theme-shadow-hover: 0 4px 16px rgba(166, 124, 82, 0.12);
+}
+
+:root[data-theme="classic"][data-dark="true"] {
+  /* Dark Mode */
+  --theme-bg: #2A2620;
+  --theme-surface: #352F28;
+  --theme-text: #F8F5F0;
+  --theme-text-muted: #B8B3AC;
+  --theme-accent: #C9A878;
+  --theme-border: #5A5248;
+  --theme-hover: #3A342D;
+  --theme-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --theme-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Default theme (minimalist) */
+:root:not([data-theme]) {
+  --theme-bg: #FFFFFF;
+  --theme-surface: #F5F5F5;
+  --theme-text: #1A1A1A;
+  --theme-text-muted: #6B6B6B;
+  --theme-accent: #1A1A1A;
+  --theme-border: #E5E5E5;
+  --theme-hover: #F9F9F9;
+  --theme-font-heading: 'Inter', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --theme-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --theme-heading-weight: 900;
+  --theme-heading-tracking: -0.05em;
+  --theme-radius: 0px;
+  --theme-border-width: 0px;
+  --theme-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --theme-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Disable transitions for theme changes on load */
+html.no-transition *,
+html.no-transition *::before,
+html.no-transition *::after {
+  transition: none !important;
+}
+

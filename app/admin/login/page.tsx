@@ -130,7 +130,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md bg-white rounded-lg border shadow-sm p-6">
+      <div className="w-full max-w-md bg-white rounded-xl border border-gray-200/80 shadow-soft p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Iniciar Sesión</h1>
           <p className="text-sm text-gray-500 mt-1">
@@ -155,7 +155,7 @@ export default function LoginPage() {
               required
               disabled={loading}
               autoComplete="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-200 bg-white text-gray-900 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
             />
           </div>
           <div className="space-y-2">
@@ -170,7 +170,7 @@ export default function LoginPage() {
               required
               disabled={loading}
               autoComplete="current-password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-200 bg-white text-gray-900 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
             />
           </div>
           <button

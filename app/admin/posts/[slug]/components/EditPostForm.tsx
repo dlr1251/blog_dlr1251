@@ -5,9 +5,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MarkdownEditor, type AIComment } from '../../new/components/MarkdownEditor';
 import { AIAgentsPanel } from '../../new/components/AIAgentsPanel';
+import { useToast } from '@/components/ui/use-toast';
+import { PublishOptions } from './PublishOptions';
 
 export function EditPostForm({ post }: { post: any }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -36,16 +39,20 @@ export function EditPostForm({ post }: { post: any }) {
 
       // Determine published_at based on scheduled time or immediate publish
       let publishedAt = null;
-      if (formData.published) {
-        if (formData.scheduledPublishAt) {
-          publishedAt = new Date(formData.scheduledPublishAt).toISOString();
-        } else if (!post.published_at) {
+      let shouldPublish = formData.published;
+      
+      if (formData.scheduledPublishAt) {
+        publishedAt = new Date(formData.scheduledPublishAt).toISOString();
+        shouldPublish = true; // Scheduled posts should be marked as published
+      } else if (formData.published) {
+        if (!post.published_at) {
           // Only set to now if it wasn't already published
           publishedAt = new Date().toISOString();
         } else {
           // Keep existing published_at
           publishedAt = post.published_at;
         }
+        shouldPublish = true;
       }
 
       const response = await fetch(`/api/posts/${post.slug}`, {
@@ -59,7 +66,7 @@ export function EditPostForm({ post }: { post: any }) {
           excerpt: formData.excerpt,
           category: formData.category || null,
           tags: tagsArray,
-          published: formData.published,
+          published: shouldPublish,
           published_at: publishedAt,
         }),
       });
@@ -70,7 +77,12 @@ export function EditPostForm({ post }: { post: any }) {
       }
 
       const updatedPost = await response.json();
-      router.push('/admin/posts');
+      toast({
+        title: "Cambios guardados",
+        description: "El post se ha actualizado correctamente.",
+        variant: "success",
+      });
+      setLoading(false);
       router.refresh();
     } catch (err: any) {
       setError(err.message || 'Error al actualizar el post');
@@ -206,7 +218,7 @@ export function EditPostForm({ post }: { post: any }) {
                 required
                 disabled={loading}
                 placeholder="Título del post"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                className="w-full px-3 py-2 border border-gray-200 bg-white text-gray-900 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -243,7 +255,7 @@ export function EditPostForm({ post }: { post: any }) {
                     disabled={loading}
                     placeholder="Breve descripción del post"
                     rows={2}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-200 bg-white text-gray-900 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -259,7 +271,7 @@ export function EditPostForm({ post }: { post: any }) {
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                       disabled={loading}
                       placeholder="Ej: Tecnología, Derecho"
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-200 bg-white text-gray-900 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
                     />
                   </div>
 
@@ -274,7 +286,7 @@ export function EditPostForm({ post }: { post: any }) {
                       onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                       disabled={loading}
                       placeholder="tag1, tag2, tag3"
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-200 bg-white text-gray-900 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -310,75 +322,48 @@ export function EditPostForm({ post }: { post: any }) {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-4 sm:p-6 shadow-soft">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Publicación</h2>
-            <p className="text-sm text-gray-500 mt-1">Configura el estado de publicación</p>
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Publicación</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">Elige cómo guardar el post</p>
           </div>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="published"
-                checked={formData.published}
-                onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                disabled={loading}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-              />
-              <label htmlFor="published" className="text-sm font-medium text-gray-700 cursor-pointer">
-                Publicar
-              </label>
-            </div>
-            {formData.published && (
-              <div className="space-y-2 pl-6 border-l-2 border-gray-200">
-                <label htmlFor="scheduledPublishAt" className="block text-sm font-medium text-gray-700">
-                  Programar publicación (opcional)
-                </label>
-                <input
-                  type="datetime-local"
-                  id="scheduledPublishAt"
-                  value={formData.scheduledPublishAt}
-                  onChange={(e) => setFormData({ ...formData, scheduledPublishAt: e.target.value })}
-                  disabled={loading}
-                  min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
-                />
-                {formData.scheduledPublishAt ? (
-                  <p className="text-sm text-gray-500">
-                    El post se publicará el {new Date(formData.scheduledPublishAt).toLocaleString('es-ES')}
-                  </p>
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    {post.published_at 
-                      ? `El post ya fue publicado el ${new Date(post.published_at).toLocaleString('es-ES')}`
-                      : 'El post será publicado inmediatamente al guardar.'}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+          <PublishOptions
+            published={formData.published}
+            scheduledPublishAt={formData.scheduledPublishAt}
+            onPublishedChange={(published) => setFormData({ ...formData, published })}
+            onScheduledChange={(scheduledPublishAt) => {
+              // Only set published based on scheduledPublishAt if we're in schedule mode
+              // Otherwise, let onPublishedChange handle it
+              setFormData((prev) => ({
+                ...prev,
+                scheduledPublishAt,
+                published: scheduledPublishAt ? true : prev.published
+              }));
+            }}
+            existingPublishedAt={post.published_at}
+          />
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
           <button
             type="button"
             onClick={handleDelete}
             disabled={loading}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Eliminar Post
           </button>
-          <div className="flex gap-4">
+          <div className="flex gap-2 sm:gap-4">
             <Link 
               href="/admin/posts"
-              className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors text-center"
             >
               Cancelar
             </Link>
             <button 
               type="submit" 
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Guardando...' : 'Guardar Cambios'}
             </button>

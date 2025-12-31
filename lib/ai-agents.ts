@@ -67,16 +67,20 @@ export async function executeAIAgent(
       name: agent.name,
       type: agent.type,
       enabled: agent.enabled,
+      systemPromptPreview: agent.system_prompt?.substring(0, 100) || 'NO PROMPT',
+      userPromptPreview: agent.user_prompt?.substring(0, 50) || 'NO PROMPT',
     });
 
     // Replace template variables in user prompt
     let userPrompt = agent.user_prompt || '{{content}}';
-    userPrompt = userPrompt.replace('{{content}}', content);
+    // Replace all occurrences, not just the first one
+    userPrompt = userPrompt.replace(/\{\{content\}\}/g, content);
     
     // Replace additional context variables
     if (additionalContext) {
       Object.entries(additionalContext).forEach(([key, value]) => {
-        userPrompt = userPrompt.replace(`{{${key}}}`, String(value));
+        const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+        userPrompt = userPrompt.replace(regex, String(value));
       });
     }
 
@@ -84,11 +88,15 @@ export async function executeAIAgent(
     const config: AIAgentConfig = agent.config || {};
 
     console.log(`[AI Agent ${executionId}] Calling Grok`, {
+      agentId,
+      agentName: agent.name,
+      agentType: agent.type,
       model: config.model || 'grok-4-1-fast-reasoning',
       temperature: config.temperature,
       maxTokens: config.maxTokens,
       userPromptLength: userPrompt.length,
       systemPromptLength: agent.system_prompt?.length || 0,
+      systemPromptPreview: agent.system_prompt?.substring(0, 150) || 'NO PROMPT',
     });
 
     // Execute with Grok

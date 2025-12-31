@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { createPublicServerClient } from '@/lib/supabase';
 import { format } from 'date-fns';
-import { StyleSelector } from './posts/[slug]/components/StyleSelector';
 
 export default async function Home() {
   const supabase = createPublicServerClient();
@@ -47,40 +46,44 @@ export default async function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold">
-              Blog de Daniel Luque
-            </Link>
-            <nav className="space-x-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">
-                Inicio
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div style={{ backgroundColor: 'var(--theme-bg)', transition: 'background-color 500ms ease-in-out' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-            <div>
-              <h1 className="text-4xl font-bold mb-4">Últimos Posts</h1>
-              <p className="text-gray-600">
-                Pensamientos, ideas y reflexiones sobre tecnología, derecho y más.
-              </p>
-            </div>
-            <StyleSelector />
+          <div>
+            <h1 
+              className="text-3xl font-bold mb-4"
+              style={{
+                color: 'var(--theme-text)',
+                fontFamily: 'var(--theme-font-heading)',
+                fontWeight: 'var(--theme-heading-weight)',
+                letterSpacing: 'var(--theme-heading-tracking)',
+              }}
+            >
+              Últimos Posts
+            </h1>
+            <p style={{ color: 'var(--theme-text-muted)' }}>
+              Pensamientos, ideas y reflexiones sobre tecnología, derecho y más.
+            </p>
           </div>
         </div>
 
         {postsWithCounts.length === 0 ? (
-          <div className="bg-white rounded-lg border p-6 shadow-sm">
-            <p className="text-center text-gray-500">
+          <div 
+            className="p-6 card-hover"
+            style={{
+              backgroundColor: 'var(--theme-surface)',
+              border: 'var(--theme-border-width) solid var(--theme-border)',
+              borderRadius: 'var(--theme-radius)',
+              boxShadow: 'var(--theme-shadow)',
+            }}
+          >
+            <p className="text-center" style={{ color: 'var(--theme-text-muted)' }}>
               Aún no hay posts publicados. 
-              <Link href="/admin/posts/new" className="text-blue-600 hover:underline ml-1">
+              <Link 
+                href="/admin/posts/new" 
+                className="ml-1 hover:opacity-80 underline"
+                style={{ color: 'var(--theme-accent)' }}
+              >
                 Crea tu primer post
               </Link>
             </p>
@@ -89,12 +92,27 @@ export default async function Home() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {postsWithCounts.map((post: any) => (
               <Link key={post.id} href={`/posts/${post.slug}`}>
-                <div className="bg-white rounded-lg border p-6 shadow-sm h-full hover:shadow-lg transition-shadow cursor-pointer">
+                <div 
+                  className="p-6 h-full card-hover cursor-pointer"
+                  style={{
+                    backgroundColor: 'var(--theme-surface)',
+                    border: 'var(--theme-border-width) solid var(--theme-border)',
+                    borderRadius: 'var(--theme-radius)',
+                    boxShadow: 'var(--theme-shadow)',
+                    transition: 'all 300ms ease-in-out',
+                  }}
+                >
                   <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 mb-2">
+                    <h3 
+                      className="text-lg font-semibold line-clamp-2 mb-2"
+                      style={{
+                        color: 'var(--theme-text)',
+                        fontFamily: 'var(--theme-font-heading)',
+                      }}
+                    >
                       {post.title}
                     </h3>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm" style={{ color: 'var(--theme-text-muted)' }}>
                       {post.published_at && (
                         <time dateTime={post.published_at}>
                           {format(new Date(post.published_at), "d MMM, yyyy")}
@@ -107,11 +125,14 @@ export default async function Home() {
                   </div>
                   {post.excerpt && (
                     <div>
-                      <p className="text-sm text-gray-600 line-clamp-3">
+                      <p 
+                        className="text-sm line-clamp-3"
+                        style={{ color: 'var(--theme-text-muted)' }}
+                      >
                         {post.excerpt}
                       </p>
                       {post._count.comments > 0 && (
-                        <p className="text-xs text-gray-500 mt-2">
+                        <p className="text-xs mt-2 opacity-70" style={{ color: 'var(--theme-text-muted)' }}>
                           {post._count.comments} comentario{post._count.comments !== 1 ? 's' : ''}
                         </p>
                       )}
@@ -122,7 +143,7 @@ export default async function Home() {
             ))}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }
