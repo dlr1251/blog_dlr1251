@@ -29,7 +29,7 @@ export function EditPostForm({ post }: { post: any }) {
 
     try {
       const tagsArray = formData.tags
-        ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+        ? formData.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean)
         : [];
 
       const response = await fetch(`/api/posts/${post.slug}`, {

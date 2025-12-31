@@ -27,8 +27,11 @@ export default async function PostsPage() {
             <h1 className="text-3xl font-bold">Posts</h1>
             <p className="text-gray-600 mt-2">Gestiona todos tus posts</p>
           </div>
-          <Link href="/admin/posts/new">
-            <Button>Nuevo Post</Button>
+          <Link 
+            href="/admin/posts/new"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          >
+            Nuevo Post
           </Link>
         </div>
         <div className="bg-white rounded-lg border p-6 shadow-sm">
